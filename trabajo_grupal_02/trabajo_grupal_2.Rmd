@@ -1,0 +1,91 @@
+---
+title: 'Trabajo Grupal #2'
+author: "Jesus M. Huayhua Flores"
+date: "2024-05-08"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Librerias a utilizar
+```{r}
+library(DescTools)
+library(readxl)
+#library(MASS)
+```
+
+
+# Lectura del archivo
+
+```{r}
+data <- read_xlsx(path="Sistema.xlsx")
+head(data)
+```
+
+# Pregunta01
+
+Defina las variables que se deben involucrar en el estudio y establezca la hipótesis nula y alternativa que estén en conformidad con el objetivo del estudio.
+
+## Solucion
+
+- $X_1$ Tiempo de realización de una tarea informática, que una persona consigue usando Windows.
+- $X_2$ Tiempo de realización de una tarea informática, que una persona consigue usando Apple.
+- $X_3$ Tiempo de realización de una tarea informática, que una persona consigue usando Android.
+
+$$
+\begin{aligned}
+H_{o}&:\mu_1=\mu_2=\mu_3=\mu\\
+H_{1}&:\exists i | \mu_{i} \neq \mu
+\end{aligned}
+$$
+
+# Pregunta02
+
+Considerando de que participaron 15 operadores, los cuales fueron divididos aleatoriamente en 3 grupos de 5 cada uno: Windows, MacOS y Android ¿qué se puede decir sobre las 3 muestras de operadores que formaron los 3 grupos?
+
+## Solución
+
+Los 15 operadores fueron seleccionados aleatoriamente en grupos de 5 cada uno. Por lo tanto, los datos de cada grupo no están influenciados por alguno de los otros grupos.
+
+Así mismo, se puede afirmar que las 3 muestras de los operadores son independientes y representativas de la población de operadores.
+
+# Pregunta 03
+
+Verifique si es posible aplicar una prueba de hipótesis paramétrica (establezca y
+haga las pruebas para los contrastes de hipótesis que deben ser chequeados)
+
+## Solución
+
+Aqui va la SOLUCION 3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
