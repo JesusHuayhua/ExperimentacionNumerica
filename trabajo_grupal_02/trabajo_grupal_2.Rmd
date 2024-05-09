@@ -56,7 +56,11 @@ haga las pruebas para los contrastes de hipótesis que deben ser chequeados)
 
 ## Solución
 
-Aqui va la SOLUCION 3
+```{r}
+shapiro.test(data$Tiempo[data$Sistema == "Windows"])
+shapiro.test(data$Tiempo[data$Sistema == "MacOS"])
+shapiro.test(data$Tiempo[data$Sistema == "Android"])
+```
 
 
 
