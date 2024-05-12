@@ -11,7 +11,7 @@ output:
 ```{r}
 library(DescTools)
 library(readxl)
-#library(MASS)
+library(ggplot2)
 ```
 
 
@@ -56,40 +56,73 @@ haga las pruebas para los contrastes de hipótesis que deben ser chequeados)
 
 ## Solución
 
+Realizamos la prueba de Shapiro-Wilk, para encontrar los valores de *p-valor* de cada uno de los grupos.
+
 ```{r}
-shapiro.test(data$Tiempo[data$Sistema == "Windows"])
-shapiro.test(data$Tiempo[data$Sistema == "MacOS"])
-shapiro.test(data$Tiempo[data$Sistema == "Android"])
+windows <- data$Tiempo[data$Sistema == "Windows"]
+macos <- data$Tiempo[data$Sistema == "MacOS"]
+android <- data$Tiempo[data$Sistema == "Android"]
+# Prueba de Shapiro
+shapiro.test(windows)
+shapiro.test(macos)
+shapiro.test(android)
+
+
 ```
 
+Como podemos observar los *p-value* son:
 
+$$
+\begin{aligned}
+p-value_{windows} &= 0.8234 \\
+p-value_{macos} &= 0.6853 \\
+p-value_{android} &= 0.2567
+\end{aligned}
+$$
 
+Estos valores p representan la probabilidad de observar los datos de cada grupo si la distribución verdadera de los datos fuera normal.
 
+Así mismo, todos los valores p fueron mayor a $\alpha = 0.05$. Por lo tanto, en ninguno de los grupos se rechaza la normalidad.
 
+Podemos asumir, que se sigue una distribución normal para poder aplicar la prueba paramétrica ANOVA.
 
+```{r}
+bartlett.test(list(windows,macos,android))
+```
+Dado que el $p = 0.8877 > \alpha = 0.05$, no contamos con las suficientes pruebas para rechazar la hipótesis nula de homogeneidad de varianzas. Entonces, se puede afirmar que las varianzas entre los 3 grupos analizados son aproximadamente iguales. 
 
+# Pregunta 04
 
+Realice la prueba de hipótesis que sea apropiada para responder al objetivo del estudio. No se olvide que, si es el caso, debe reescribir su hipótesis nula y alternativa. ¿Cuáles son sus conclusiones?
 
+## Solución
 
+Dado que en la pregunta anterior verificamos que se cumplen los supuestos para aplicar una prueba ANOVA. Procederemos para verificar si existen diferencias significativas entre los sistemas operativos.
 
+```{r}
+anova <- aov(c(windows,macos,android) ~ rep(c("Windows","MacOs","Android"), each=5))
+summary(anova)
+```
+El valor $p_{asociado} = 0.00373 < \alpha = 0.05$, se puede concluir que si existe una diferencia significativa en los tiempos de realización entre los sistemas operativos.
 
+# Pregunta 05
 
+Descubra, mediante un método gráfico, cuál sistema es el más eficiente para realizar la tarea.
 
+## Solución
 
+```{r}
+datos <- data.frame(
+  sistema = rep(c("Windows", "MacOS", "Android"), each = 5),
+  tiempo = c(windows,macos,android)
+)
 
+# Crear el diagrama de caja con ggplot2 y asignar colores a cada grupo
+ggplot(datos, aes(x = sistema, y = tiempo)) +
+  geom_boxplot() +
+  labs(title = "Diagrama de Caja para los sistemas operativos",
+       x = "Sistema Operativo",
+       y = "Tiempo en segundo")
+```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Del gráfico, podemos ver que la media de MacOS es menor en comparación con los demás sistemas operativos. Así mismo, que es windows con la mayor media  y el que demora una mayor cantidad de tiempo.

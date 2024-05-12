@@ -1,0 +1,171 @@
+---
+title: "Trabajo Grupal 01"
+author: "Jesus Mauricio Huayhua Flores"
+date: "2024-04-26"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Apertura de archivos
+
+```{r}
+library(readxl)
+library(DescTools)
+library(MASS)
+library(ggplot2)
+```
+
+
+# Lectura de Archivos
+
+```{r}
+#Consideraciones se eliminaron los 3 valores encontrados a la derecha ya que estos
+#se podian calcular usando R.
+abulones_data <- read_xlsx(path = "abulones.xlsx")
+# Impresion de los valores de file
+head(abulones_data)
+```
+## Pregunta01
+
+Calcule la tabla de distribución con las frecuencias absolutas y con las frecuencias esperadas
+que se obtendrían bajo la hipótesis de que el diámetro de los abulones sigue la distribución normal.
+(Para determinar el número de intervalos, no se olvide de usar la regla de Sturges.)
+
+### Desarollo
+
+```{r}
+# Calcular el número de intervalos utilizando la regla de Sturges
+n <- nrow(abulones_data)
+k <- ceiling(1 + log2(n))
+
+# Calcular el ancho de cada intervalo
+rango_diametro <- range(abulones_data$Diameter)
+ancho_intervalo <- (rango_diametro[2] - rango_diametro[1]) / k
+
+# Crear los límites de los intervalos
+limites_intervalo <- seq(rango_diametro[1], rango_diametro[2] + ancho_intervalo,
+                         by = ancho_intervalo)
+
+# Calcular las frecuencias absolutas
+frecuencia <- cut(abulones_data$Diameter, breaks = limites_intervalo, right = FALSE)
+tabla_frecuencia <- table(frecuencia)
+
+# Calcular las frecuencias esperadas asumiendo una distribución normal
+# Ajustar una distribución normal a los datos de diámetro
+normal_ajustada <- fitdistr(abulones_data$Diameter, "normal")
+
+# Obtener los parámetros de la distribución normal ajustada
+mu <- normal_ajustada$estimate[1]
+sigma <- normal_ajustada$estimate[2]
+
+# Calcular las probabilidades acumuladas en cada intervalo
+probabilidades_acumuladas <- pnorm(limites_intervalo, mean = mu, sd = sigma)
+
+# Calcular las frecuencias esperadas
+frecuencia_esperada <- diff(probabilidades_acumuladas) * n
+
+# Mostrar la tabla de distribución
+tabla_distribución <- data.frame(Intervalo = paste(round(limites_intervalo[-length(limites_intervalo)], 2), "-", round(limites_intervalo[-1], 2)),
+                                 Frecuencia_Absoluta = as.vector(tabla_frecuencia),
+                                 Frecuencia_Esperada = as.vector(frecuencia_esperada))
+print(tabla_distribución)
+```
+
+## Pregunta02
+
+Con las distribuciones observadas y las esperadas, desarrolle 2 gráficos de
+polígonos de frecuencias superpuestos en el mismo plano. Comente si le parece
+que la distribución parece o no ser la normal.
+
+### Desarrollo
+
+```{r,echo=FALSE}
+# Calcular las frecuencias observadas y esperadas
+frecuencia_obs <- as.vector(tabla_frecuencia)
+frecuencia_esp <- as.vector(frecuencia_esperada)
+
+# Crear el gráfico de polígonos de frecuencias
+plot(limites_intervalo[-length(limites_intervalo)], frecuencia_obs, type = "l",
+     col = "blue", lwd = 2, xlab = "Diámetro", ylab = "Frecuencia",
+     main = "Polígonos de Frecuencias Observadas y Esperadas")
+lines(limites_intervalo[-length(limites_intervalo)], frecuencia_esp, type = "l",
+      col = "red", lwd = 2)
+legend("topright", legend = c("Observadas", "Esperadas"), col = c("blue", "red"),
+       lty = 1, lwd = 2)
+```
+
+Para evaluar si la distribución parece ser normal, observamos la superposición
+de las frecuencias observadas y esperadas en el gráfico. Si las curvas se superponen
+de manera cercana, sugiere que la distribución observada es similar a la esperada bajo
+una distribución normal.
+
+## Pregunta03
+
+Usando el RStudio (o el Rcommander), obtenga la gráfica de normalidad.
+Comente si se puede decir que la distribución del diámetro de los abulones
+parece seguir la distribución normal.
+
+### Desarrollo
+```{r}
+# Crear el gráfico de normalidad
+ggplot(data = abulones_data, aes(sample = Diameter)) +
+  geom_qq() + 
+  geom_qq_line(color = "red") +
+  labs(title = "Gráfico Q-Q de Normalidad para el Diámetro de los Abulones")
+
+```
+
+Después de observar la gráfica, podemos verificar que los puntos siguen la línea diagonal; por lo tanto
+se puede indicar que los datos están distribuidos normalmente.
+
+## Pregunta04
+
+De acuerdo al objetivo de la investigación, establezca las hipótesis nula y alternativa. Calcule
+manualmente de la tabla la estadística de prueba chi-cuadrado, el valor crítico correspondiente y el
+p-valor (si es el caso, no se olvide de: juntar intervalos con menos de 5 casos esperados y considerar
+el número de grados de libertad adecuado). ¿A cuál conclusión se puede llegar?
+
+### Desarrollo
+
+Para establecer las hipótesis nula y alternativa, primero necesitamos definir el objetivo de la investigación. Dado que estamos analizando si el diámetro de los abulones sigue una distribución normal, una posible hipótesis nula y alternativa podrían ser las siguientes:
+
+- $\text{Hipótesis nula} H_O$:El diámetro de los abulones sigue una distribución normal.
+- $\text{Hipótesis alternativa} (H_1)$: El diámetro de los abulones no sigue una distribución normal.
+
+Para probar estas hipótesis, podemos utilizar la prueba de bondad de ajuste Chi-cuadrado, que compara las frecuencias observadas con las frecuencias esperadas bajo la distribución normal.
+
+Para calcular la estadística de prueba Chi-cuadrado manualmente, primero necesitamos la frecuencia observada $(O_i)$ y la frecuencia esperada $(E_i)$ para cada intervalo. Luego, calcularemos la diferencia entre las frecuencias observadas y esperadas al cuadrado, dividiremos esta diferencia por las frecuencias esperadas y sumaremos estos valores para obtener la estadística de prueba Chi-cuadrado.
+
+Después, necesitaremos determinar el valor crítico y el p-valor correspondiente. El valor crítico se encuentra en la tabla de la distribución Chi-cuadrado con un nivel de significancia dado y el número adecuado de grados de libertad. El p-valor se calcula utilizando la distribución Chi-cuadrado y representa la probabilidad de obtener un valor de prueba al menos tan extremo como el observado bajo la hipótesis nula.
+
+Finalmente, compararemos la estadística de prueba Chi-cuadrado con el valor crítico y el p-valor para tomar una decisión sobre la hipótesis nula.
+
+Ahora, procedamos a calcular manualmente la estadística de prueba Chi-cuadrado, el valor crítico y el p-valor.
+
+
+La fórmula para la estadística de prueba Chi-cuadrado es:
+
+$$
+X^2 = \sum^{k}_{i=1}\frac{(O_i-E_i)^2}{E_i}
+$$
+
+Valor crítico Chi-cuadrado($X^{2}_{\alpha,df}$)
+
+- $\alpha = 0.5$
+- $df = k - 1 = 14 - 1 = 13$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
