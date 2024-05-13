@@ -87,3 +87,89 @@ print(r)
 y <- c(4,6,3,8,10,5,4,3,5,3)
 length(y)
 wilcox.test(y,mu = 5, alternative = "greater",conf.level =0.97,correct=F)
+
+
+
+alpha = 0.05
+qf(alpha/2,14,14)
+qf(1-alpha/2,14,14)
+
+
+qt(1-alpha,n1 + n2 - 2)
+
+# Problemas
+
+fo = (0.1811 / 0.067)^2
+
+alpha = 0.05
+valor_minimo = qf(alpha/2,4,4)
+valor_maximo = qf(1 - alpha/2,4,4)
+
+if (valor_minimo < fo && fo < valor_maximo) {
+  print("Se aceptan varianzas iguales")
+}else{
+  print("NO: Se aceptan varianzas iguales")
+}
+
+
+qt(1-alpha,8)
+
+
+n1 = 5
+n2 = 5
+s1 = 0.1811
+s2 = 0.067
+media1 = 0.417
+media2 = 0.151
+sp = sqrt(((n1 - 1)*(s1^2) + (n2 - 1)*(s2^2))   /   (n1 + n2 - 2) )
+
+to = (media1 - media2) / (sp * sqrt(1/n1 + 1/n2))
+to
+
+
+estandar = c(32,37,35,28,41,44,35,31,34)
+nuevo    = c(35,31,29,25,34,40,27,32)
+
+(sd(estandar) / sd(nuevo)) ^ 2
+n1 = length(nuevo)
+n2 = length(estandar)
+alpha = 0.05
+qf(alpha/2,n1 - 1, n2 - 1)
+qf(1 - alpha/2,n1 - 1, n2 - 1)
+
+
+s1 = sd(nuevo)
+s2 = sd(estandar)
+media1 = mean(nuevo)
+media2 = mean(estandar)
+sp = sqrt(((n1 - 1)*(s1^2) + (n2 - 1)*(s2^2))   /   (n1 + n2 - 2) )
+to = (media1 - media2) / (sp * sqrt(1/n1 + 1/n2))
+
+t = qt(alpha,n1 + n2 - 2)
+if (to > t) {
+  print("NO se rechaza H0")
+}else{
+  print("SI se rechaza H0")
+}
+
+
+sistema1 = c(25,29,42,16,31,14,33,45,26,34,30)
+sistema2 = c(18,37,40,56,49,28,20,34,39,47)
+alpha = 0.01
+
+# Hipotesis
+#
+# H0 : me1 = me2
+#
+# H1 : me1 != me2
+
+wilcox.test(sistema1,sistema2,mu=0,conf.level=0.99)
+wilcox.test(sistema1,sistema2)
+# nos brinad el p-valor
+
+
+
+
+
+
+

@@ -174,38 +174,117 @@ La suma de rangos positivos $S^+$ es el estadístico de prueba, el cual es compa
 
 Forma práctica, se enumar de menor a mayor diferencia, y posteriormente se verifica en cuantos se encuentra empate en la diferencia para posteriormente realizar el promedio de las diferencias de dichos valores
 
+## Otros estadísticos de prueba
 
-# En R
+![](img/wilcox.png)
+
+## En R
 
 ```
 wilcox.test(data, mu = , alternative = "greater",conf.level = 1 - alpha, correct = F)
 ```
 
+# Prueba de Hipótesis para 2 parámetros
+
+## Diferencia de Medias
+
+- Contrastar la diferencia de 2 medias $H_0:\mu_x - \mu_y = \delta_o$
+- Puede ser tanto muestras independientes o muestras relacionadas.
+
+### Para parámetros de muestras independientes
+
+Hipótesis:
+
+$$
+\begin{cases}
+H_0 &: \sigma_x^2 / \sigma_y^2 = 1 \\
+H_1 &: \sigma_x^2 / \sigma_y^2 \neq 1
+\end{cases}
+$$
+
+1. Verificando la distribución, si:
+
+$$
+X\sim N(\mu_1,\sigma_1^2)\ y \ Y \sim N(\mu_2,\sigma_2^2)\\
+\Rightarrow F = \frac{S_x^2}{S_y^2}\sim Fisher(n_1 -1, n_2 - 1)
+$$
+
+Donde $n1$ y $n2$ son el tamañao de la muestra para $X$ y $Y$ respectivamente.
+
+Para hallar la fisher es con el siguiente comando:
+
+```R
+alpha = 0.05
+qf(alpha/2,n1 - 1,n2 - 1)
+qf(1-alpha/2,n1 - 1 ,n2 -1)
+```
+
+<br>
+
+#### Varianzas conocidas
+
+Espacio
+
+![](img/caso01.png)
 
 
+```R
+z0 = ((medianX - mediamY) - delta0)  / (sqrt())
+```
+<br>
+
+#### Varianzas desconocidas e iguales
+
+espacio
+
+![](img/caso02.png)
 
 
+```R
+n1 = 5
+n2 = 5
+s1 = 0.1811
+s2 = 0.067
+media1 = 0.417
+media2 = 0.151
+sp = sqrt(((n1 - 1)*(s1^2) + (n2 - 1)*(s2^2))   /   (n1 + n2 - 2) )
+to = (media1 - media2) / (sp * sqrt(1/n1 + 1/n2))
+
+qt(alpha,n1 + n2 - 2)
+
+# to > qt rechazamos H0
+```
+
+#### Varianzas desconocidas y diferentes
+
+Espacio
+
+![](img/caso03.png)
 
 
+```R
+gl = (S1/n1 + S2/n2) / ( ((s1/n1)^2)/(n1 - 1) +  ((s2/n2)^2)/(n2 - 1) )
+qt(1-alpha, n1 + n2 - 2)
+```
+
+## Prueba de hipótesis para la diferencia de medias de muestras relacionadas
+
+![](img/relacionada01.png)
+
+![](img/relacionada02.png)
+
+![](img/relacionada03.png)
+
+![](img/relacionada04.png)
 
 
+### Prueba de hipótesis NO paramétricas para 2 o más parámetros
 
+#### Prueba de U de Mann Whitney
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+- Es considerada como la alternativa no paramétrica a una prueba de diferencias de medias.
+- Se basa en los rangos observados
+- Permite comparar las **medianas** de dos muestras independientes son diferentes.
 
 
 
